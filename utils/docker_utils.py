@@ -243,6 +243,15 @@ def build_container(
 
         # Run the container with host networking and volume mount
         # For Podman, we need to pass GPU devices explicitly via security_opt or devices
+        # Pass API keys from host environment to container
+        container_env = {}
+        for key in ["ANTHROPIC_API_KEY", "OPENAI_API_KEY", "GEMINI_API_KEY", "PYTHONUTF8", "PYTHONIOENCODING"]:
+            val = os.environ.get(key)
+            if val:
+                container_env[key] = val
+        container_env.setdefault("PYTHONUTF8", "1")
+        container_env.setdefault("PYTHONIOENCODING", "utf-8")
+
         run_kwargs = {
             "image": image_name,
             "name": container_name,
@@ -253,6 +262,7 @@ def build_container(
             "volumes": {
                 os.path.abspath(repo_path): {"bind": f"/{REPO_NAME}", "mode": "rw"}
             },
+            "environment": container_env,
             "command": "tail -f /dev/null",
         }
 

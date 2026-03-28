@@ -119,7 +119,11 @@ def visualize_graph(G, score_map, output_dir, name_suffix, split="train", type="
         print("No nodes to visualize.")
         return
 
-    pos = graphviz_layout(G, prog="dot")
+    try:
+        pos = graphviz_layout(G, prog="dot")
+    except (ImportError, Exception) as e:
+        print(f"Warning: graphviz_layout unavailable ({e}), skipping archive visualization.")
+        return
 
     nodes = list(G.nodes())
     scores = [score_map.get(node, None) for node in nodes]

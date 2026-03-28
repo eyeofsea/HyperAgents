@@ -267,6 +267,7 @@ def setup_initial_gen(
     # Define exclusion criteria
     excluded_dirs = {
         ".claude",
+        ".git",
         "outputs",
         "analysis",
         "misc",
