@@ -7,6 +7,7 @@ from concurrent.futures import ThreadPoolExecutor
 from datetime import datetime
 
 import docker
+from tqdm import tqdm
 from analysis.plot_progress import plot_progress_single, plot_progress_together
 from analysis.visualize_archive import (
     visualize_archive_single,
@@ -907,7 +908,9 @@ def generate_loop(
             archive,
             root_dir, root_commit,
         )
-    for current_genid in range(start_genid, max_generation + 1):
+    gen_pbar = tqdm(range(start_genid, max_generation + 1), desc="Generations", unit="gen")
+    for current_genid in gen_pbar:
+        gen_pbar.set_postfix(gen=current_genid, parent=parent_genid)
         metadata = generate(
             docker_client,
             [d for d in domains if d != "polyglot"],

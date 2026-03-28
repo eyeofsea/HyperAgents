@@ -16,7 +16,25 @@ class TaskAgent(AgentSystem):
                 - new_msg_history (list): A list of messages representing the message history of the interaction.
         """
         domain = inputs['domain']
-        instruction = f"""You are an agent.
+
+        if domain == "paper_review":
+            instruction = f"""You are an expert academic paper reviewer. Your task is to predict whether the following paper would be accepted or rejected at a top-tier venue.
+
+Read the paper carefully and make your decision.
+
+Paper:
+```
+{inputs['paper_text'][:30000]}
+```
+
+You MUST respond in JSON format with ONLY "accept" or "reject":
+<json>
+{{
+    "response": "accept" or "reject"
+}}
+</json>"""
+        else:
+            instruction = f"""You are an agent.
 
 Task input:
 ```

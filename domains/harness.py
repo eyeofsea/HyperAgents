@@ -11,6 +11,7 @@ import os
 from concurrent.futures import ThreadPoolExecutor
 from datetime import datetime
 import pandas as pd
+from tqdm import tqdm
 from hydra import compose, initialize_config_dir
 from types import ModuleType
 
@@ -143,9 +144,11 @@ def harness(
                 )
             )
 
-        for idx, future in futures:
+        pbar = tqdm(futures, desc=f"Evaluating {domain}", unit="sample")
+        for idx, future in pbar:
             prediction = future.result()
             predictions[idx] = prediction
+            pbar.set_postfix(completed=sum(1 for p in predictions if p is not None))
 
             if (idx + 1) % save_interval == 0:
                 dataset["prediction"] = predictions
