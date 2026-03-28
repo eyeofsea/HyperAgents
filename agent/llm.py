@@ -10,6 +10,12 @@ load_dotenv()
 
 MAX_TOKENS = 16384
 
+# Import litellm exceptions for retry
+try:
+    from litellm.exceptions import RateLimitError as LiteLLMRateLimitError
+except ImportError:
+    LiteLLMRateLimitError = Exception
+
 CLAUDE_MODEL = "anthropic/claude-sonnet-4-5-20250929"
 CLAUDE_HAIKU_MODEL = "anthropic/claude-3-haiku-20240307"
 CLAUDE_35NEW_MODEL = "anthropic/claude-3-5-sonnet-20241022"
@@ -29,9 +35,9 @@ litellm.drop_params=True
 
 @backoff.on_exception(
     backoff.expo,
-    (requests.exceptions.RequestException, json.JSONDecodeError, KeyError),
-    max_time=600,
-    max_value=60,
+    (requests.exceptions.RequestException, json.JSONDecodeError, KeyError, LiteLLMRateLimitError),
+    max_time=1200,
+    max_value=120,
 )
 def get_response_from_llm(
     msg: str,

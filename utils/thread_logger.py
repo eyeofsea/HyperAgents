@@ -25,7 +25,8 @@ class ThreadLoggerManager:
                 logger.setLevel(self.level)
                 if not logger.handlers:
                     file_handler = RotatingFileHandler(
-                        self.log_file, maxBytes=10 * 1024 * 1024, backupCount=5
+                        self.log_file, maxBytes=10 * 1024 * 1024, backupCount=5,
+                        encoding='utf-8'
                     )
                     file_handler.setFormatter(logging.Formatter('%(message)s'))
                     file_handler.setLevel(self.level)

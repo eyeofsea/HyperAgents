@@ -1,0 +1,11 @@
+# Python
+__pycache__/
+*.pyc
+*.pyo
+venv_hyperagents/
+
+# Environment
+.env
+
+# Outputs
+outputs/

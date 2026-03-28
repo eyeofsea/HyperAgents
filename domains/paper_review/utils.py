@@ -1,6 +1,6 @@
 QUESTION_ID = "question_id"
 GROUND_TRUTH_KEY = "outcome"
-MODEL = "gpt-4o"
+MODEL = "anthropic/claude-sonnet-4-5-20250929"
 
 def format_input_dict(row):
     # Extract the inputs for the task from the row
