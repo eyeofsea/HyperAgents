@@ -523,8 +523,18 @@ def generate(
                         container_folder_name="agent_archive",
                     )
 
-                # Copy previous generations to container
-                if run_baseline == "no_archive":
+                # Use volume-mounted path instead of copying to avoid Docker pipe timeouts on Windows
+                # output_dir is inside the repo which is mounted at /{REPO_NAME}
+                output_dir_abs = os.path.abspath(output_dir)
+                repo_abs = os.path.abspath(root_dir)
+                # Check if output_dir is under the repo mount
+                # The repo root that is mounted is the parent of root_dir (which is gen_initial/hyperagents)
+                repo_mount_root = os.path.abspath(os.path.join(root_dir, "..", ".."))
+                if output_dir_abs.startswith(repo_mount_root):
+                    rel_path = os.path.relpath(output_dir_abs, repo_mount_root).replace(os.sep, "/")
+                    container_prev_eval_path = f"/{REPO_NAME}/{rel_path}"
+                    safe_log(f"Using volume-mounted path: {container_prev_eval_path}")
+                elif run_baseline == "no_archive":
                     container_prev_eval_path = os.path.join(
                         container_output_folder, *prev_gen_dir.split(os.sep)[-2:]
                     )
